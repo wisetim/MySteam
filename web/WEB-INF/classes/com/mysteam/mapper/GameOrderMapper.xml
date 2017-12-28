@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mysteam.mapper.GameOrderMapper">
+    <resultMap id="BaseResultMap" type="com.mysteam.entity.GameOrder">
+        <id column="owner_id" property="owner.userId" jdbcType="INTEGER"/>
+        <id column="game_id" property="game.gameId" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="cur_version" property="curVersion" jdbcType="VARCHAR"/>
+        <result column="buy_date" property="buyDate" jdbcType="DATE"/>
+        <result column="cost" property="cost" jdbcType="DOUBLE"/>
+
+        <association property="buyer" column="buyer_id" fetchType="lazy"
+                     select="com.mysteam.mapper.UserMapper.selectByPrimaryKey"/>
+        <association property="owner" column="owner_id" fetchType="eager"
+                     select="com.mysteam.mapper.UserMapper.selectByPrimaryKey"/>
+        <association property="game" column="game_id" fetchType="eager"
+                     select="com.mysteam.mapper.GameMapper.selectByPrimaryKey"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        owner_id, game_id, state, order_id, buyer_id, cur_version, buy_date, cost
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from game_orders
+        where owner_id = #{ownerId,jdbcType=INTEGER}
+        and game_id = #{gameId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey">
+        DELETE FROM game_orders
+        WHERE owner_id = #{ownerId,jdbcType=INTEGER}
+              AND game_id = #{gameId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.mysteam.entity.GameOrder">
+        INSERT INTO game_orders (owner_id, game_id, state,
+                                 order_id, buyer_id, cur_version,
+                                 buy_date, cost)
+        VALUES (#{owner.userId,jdbcType=INTEGER}, #{game.gameId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER},
+                #{orderId,jdbcType=VARCHAR}, #{buyer.userId,jdbcType=INTEGER}, #{curVersion,jdbcType=VARCHAR},
+                #{buyDate,jdbcType=DATE}, #{cost,jdbcType=DOUBLE})
+    </insert>
+    <insert id="insertSelective" parameterType="com.mysteam.entity.GameOrder">
+        insert into game_orders
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="owner != null">
+                owner_id,
+            </if>
+            <if test="game != null">
+                game_id,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="buyer != null">
+                buyer_id,
+            </if>
+            <if test="curVersion != null">
+                cur_version,
+            </if>
+            <if test="buyDate != null">
+                buy_date,
+            </if>
+            <if test="cost != null">
+                cost,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="owner != null">
+                #{owner.userId,jdbcType=INTEGER},
+            </if>
+            <if test="game != null">
+                #{game.gameId,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="buyer != null">
+                #{buyer.userId,jdbcType=INTEGER},
+            </if>
+            <if test="curVersion != null">
+                #{curVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="buyDate != null">
+                #{buyDate,jdbcType=DATE},
+            </if>
+            <if test="cost != null">
+                #{cost,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mysteam.entity.GameOrder">
+        update game_orders
+        <set>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="buyer != null">
+                buyer_id = #{buyer.userId,jdbcType=INTEGER},
+            </if>
+            <if test="curVersion != null">
+                cur_version = #{curVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="buyDate != null">
+                buy_date = #{buyDate,jdbcType=DATE},
+            </if>
+            <if test="cost != null">
+                cost = #{cost,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where owner_id = #{owner.userId,jdbcType=INTEGER}
+        and game_id = #{game.gameId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mysteam.entity.GameOrder">
+        UPDATE game_orders
+        SET state        = #{state,jdbcType=INTEGER},
+            order_id     = #{orderId,jdbcType=VARCHAR},
+            buyer_id     = #{buyer.userId,jdbcType=INTEGER},
+            cur_version = #{curVersion,jdbcType=VARCHAR},
+            buy_date     = #{buyDate,jdbcType=DATE},
+            cost         = #{cost,jdbcType=DOUBLE}
+        WHERE owner_id = #{owner.userId,jdbcType=INTEGER}
+              AND game_id = #{game.gameId,jdbcType=INTEGER}
+    </update>
+</mapper>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mysteam.mapper.GameMapper">
+    <resultMap id="BaseResultMap" type="com.mysteam.entity.Game">
+        <id column="game_id" property="gameId" jdbcType="INTEGER"/>
+        <result column="game_name" property="gameName" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="on_sale_date" property="onSaleDate" jdbcType="DATE"/>
+        <result column="download_addr" property="downloadAddr" jdbcType="VARCHAR"/>
+        <association property="developer" column="developer" fetchType="lazy"
+                     select="com.mysteam.mapper.UserMapper.selectByPrimaryKey"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.mysteam.entity.Game" extends="BaseResultMap">
+        <result column="cover" property="cover" jdbcType="LONGVARBINARY"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    game_id, game_name, type, developer, price, version, state, on_sale_date, download_addr
+  </sql>
+    <sql id="Blob_Column_List">
+    cover
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from games
+        where game_id = #{gameId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from games
+    where game_id = #{gameId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.mysteam.entity.Game">
+        <selectKey resultType="java.lang.Integer" keyProperty="gameId" order="BEFORE">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into games (game_id, game_name, type, developer,
+        price, version, state,
+        on_sale_date, download_addr, cover
+        )
+        values (#{gameId,jdbcType=INTEGER}, #{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+        #{developer.userId,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{version,jdbcType=VARCHAR},
+        #{state,jdbcType=INTEGER}, #{onSaleDate,jdbcType=DATE}, #{downloadAddr,jdbcType=VARCHAR},
+        #{cover,jdbcType=LONGVARBINARY}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.mysteam.entity.Game">
+        <selectKey resultType="java.lang.Integer" keyProperty="gameId" order="BEFORE">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into games
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,
+            <if test="gameName != null">
+                game_name,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="developer != null">
+                developer,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="onSaleDate != null">
+                on_sale_date,
+            </if>
+            <if test="downloadAddr != null">
+                download_addr,
+            </if>
+            <if test="cover != null">
+                cover,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{gameId,jdbcType=INTEGER},
+            <if test="gameName != null">
+                #{gameName,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR}
+            </if>
+            <if test="developer != null">
+                #{developer.userId,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DOUBLE},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="onSaleDate != null">
+                #{onSaleDate,jdbcType=DATE},
+            </if>
+            <if test="downloadAddr != null">
+                #{downloadAddr,jdbcType=VARCHAR},
+            </if>
+            <if test="cover != null">
+                #{cover,jdbcType=LONGVARBINARY},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mysteam.entity.Game">
+        update games
+        <set>
+            <if test="gameName != null">
+                game_name = #{gameName,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR}
+            </if>
+            <if test="developer != null">
+                developer = #{developer.userId,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DOUBLE},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="onSaleDate != null">
+                on_sale_date = #{onSaleDate,jdbcType=DATE},
+            </if>
+            <if test="downloadAddr != null">
+                download_addr = #{downloadAddr,jdbcType=VARCHAR},
+            </if>
+            <if test="cover != null">
+                cover = #{cover,jdbcType=LONGVARBINARY},
+            </if>
+        </set>
+        where game_id = #{gameId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.mysteam.entity.Game">
+    update games
+    set game_name = #{gameName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      developer = #{developer.userId,jdbcType=INTEGER},
+      price = #{price,jdbcType=DOUBLE},
+      version = #{version,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      on_sale_date = #{onSaleDate,jdbcType=DATE},
+      download_addr = #{downloadAddr,jdbcType=VARCHAR},
+      cover = #{cover,jdbcType=LONGVARBINARY}
+    where game_id = #{gameId,jdbcType=INTEGER}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="com.mysteam.entity.Game">
+    update games
+    set game_name = #{gameName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      developer = #{developer.userId,jdbcType=INTEGER},
+      price = #{price,jdbcType=DOUBLE},
+      version = #{version,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      on_sale_date = #{onSaleDate,jdbcType=DATE},
+      download_addr = #{downloadAddr,jdbcType=VARCHAR}
+    where game_id = #{gameId,jdbcType=INTEGER}
+  </update>
+</mapper>
