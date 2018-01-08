@@ -3,6 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
         <property name="location" value="classpath:jdbc.properties"/>
     </bean>
@@ -17,11 +18,15 @@
     </bean>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="dataSource"/>
         <!--下面的property虽然指定了mybatis-config.xml，但是里面的属性不会被全部用到-->
         <!--<property name="configLocation" value="classpath:mybatis-config.xml"/>-->
         <!--如果Mapper类和Mapper.xml文件不在同一目录下，则需要下面这个属性-->
         <!--<property name="mapperLocations" value="classpath:cn/edu/zjut/mapper/*.xml"/>-->
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <!--<bean id="collegeMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
@@ -29,30 +34,44 @@
     <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
     <!--</bean>-->
 
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <!--Mappers-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" scope="prototype">
         <!--如果配置了多余一个DataSource，下面的属性是必须的-->
         <!--<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>-->
-        <property name="basePackage" value="com.mysteam.mapper" />
+        <property name="basePackage" value="com.mysteam.mapper"/>
     </bean>
 
     <!--<bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
-        <!--<property name="mapperInterface" value="com.mysteam.mapper.UserMapper" />-->
-        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
+    <!--<property name="mapperInterface" value="com.mysteam.mapper.UserMapper" />-->
+    <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
     <!--</bean>-->
 
     <!--<bean id="gameMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
-        <!--<property name="mapperInterface" value="com.mysteam.mapper.GameMapper" />-->
-        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
+    <!--<property name="mapperInterface" value="com.mysteam.mapper.GameMapper" />-->
+    <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
     <!--</bean>-->
 
     <!--<bean id="gameOrderMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
-        <!--<property name="mapperInterface" value="com.mysteam.mapper.GameOrderMapper" />-->
-        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
+    <!--<property name="mapperInterface" value="com.mysteam.mapper.GameOrderMapper" />-->
+    <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
     <!--</bean>-->
 
     <!--<bean id="reviewMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
-        <!--<property name="mapperInterface" value="com.mysteam.mapper.ReviewMapper" />-->
-        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
+    <!--<property name="mapperInterface" value="com.mysteam.mapper.ReviewMapper" />-->
+    <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
     <!--</bean>-->
+
+    <!--Daos-->
+    <bean id="gameDao" class="com.mysteam.dao.GameDao" scope="prototype"/>
+
+    <!--Services-->
+    <bean id="gameService" class="com.mysteam.service.GameService" scope="prototype">
+        <property name="dao" ref="gameDao"/>
+    </bean>
+
+    <!--Actions-->
+    <bean id="applyNewGameAction" class="com.mysteam.action.ApplyNewGameAction" scope="prototype">
+        <property name="service" ref="gameService"/>
+    </bean>
 
 </beans>

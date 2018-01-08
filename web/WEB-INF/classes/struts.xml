@@ -5,4 +5,12 @@
         "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
+    <constant name="struts.enable.DynamicMethodInvocation" value="true"/>
+    <package name="strutsBean" extends="struts-default" namespace="/">
+        <action name="applyNewGame" class="applyNewGameAction" method="upload">
+            <result name="success">/dvlpr_home.jsp</result>
+            <result name="input">/dvlpr_apply_add.jsp</result>
+            <result name="error">/dvlpr_apply_add.jsp</result>
+        </action>
+    </package>
 </struts>

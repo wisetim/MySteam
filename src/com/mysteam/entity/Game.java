@@ -15,13 +15,13 @@ public class Game {
 
     private String version;
 
-    private Integer state;
+    private Short state;
 
     private Date onSaleDate;
 
-    private String downloadAddr;
-
     private byte[] cover;
+
+    private String introduction;
 
     public Integer getGameId() {
         return gameId;
@@ -71,11 +71,11 @@ public class Game {
         this.version = version == null ? null : version.trim();
     }
 
-    public Integer getState() {
+    public Short getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(Short state) {
         this.state = state;
     }
 
@@ -87,19 +87,19 @@ public class Game {
         this.onSaleDate = onSaleDate;
     }
 
-    public String getDownloadAddr() {
-        return downloadAddr;
-    }
-
-    public void setDownloadAddr(String downloadAddr) {
-        this.downloadAddr = downloadAddr == null ? null : downloadAddr.trim();
-    }
-
     public byte[] getCover() {
         return cover;
     }
 
     public void setCover(byte[] cover) {
         this.cover = cover;
+    }
+
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
     }
 }
