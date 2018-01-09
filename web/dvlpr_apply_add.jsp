@@ -10,7 +10,7 @@
 <html>
 <head>
     <title>添加游戏</title>
-    <link rel="stylesheet" href="assets/css/dvlpr_main.css">
+    <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/form.css">
     <link rel="stylesheet" href="assets/css/button.css">
     <script src="assets/js/jquery.min.js"></script>

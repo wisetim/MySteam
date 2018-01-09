@@ -2,6 +2,7 @@ package com.mysteam.test;
 
 import com.mysteam.constant.GameState;
 import com.mysteam.dao.ApplicationContextSingleton;
+import com.mysteam.dao.GameDao;
 import com.mysteam.entity.Game;
 import com.mysteam.entity.GameOrder;
 import com.mysteam.entity.Review;
@@ -18,6 +19,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Tim on 2017/12/25
@@ -65,12 +67,16 @@ public class TestMybatis {
 //        mapper1.insert(game);
 
 
-        getImageBinary();
-        Game game1 = mapper1.selectByPrimaryKey(2);
-        User developer = game1.getDeveloper();
-        System.out.println(developer.getAccount());
-        System.out.println(game1.getGameName());
-        base64StringToImage(game1.getCover());
+//        getImageBinary();
+//        Game game1 = mapper1.selectByPrimaryKey(2);
+//        User developer = game1.getDeveloper();
+//        System.out.println(developer.getAccount());
+//        System.out.println(game1.getGameName());
+//        base64StringToImage(game1.getCover());
+
+        GameDao dao = new GameDao();
+        List<Game> games =  dao.selectGamesByDeveloper(1);
+        for (Game game : games) System.out.println(game.getGameName());
 
         GameOrderMapper mapper2 = (GameOrderMapper) context.getBean("gameOrderMapper");
 

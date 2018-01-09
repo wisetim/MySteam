@@ -49,6 +49,25 @@
         WHERE type = #{type}
     </select>
 
+    <select id="selectGamesByDeveloper" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Apply_Column_List"/>
+        FROM
+        <if test="applying">
+            games_on_applying
+        </if>
+        <if test="!applying">
+            games
+        </if>
+        WHERE developer=#{developer}
+    </select>
+
+    <select id="selectApplyingGames" resultMap="ResultMapWithBLOBs">
+        SELECT
+            <include refid="Apply_Column_List"/>
+        FROM games_on_applying
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         DELETE FROM games
         WHERE game_id = #{gameId,jdbcType=INTEGER}

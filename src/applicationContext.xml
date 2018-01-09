@@ -74,4 +74,12 @@
         <property name="service" ref="gameService"/>
     </bean>
 
+    <bean id="getGameProductsAction" class="com.mysteam.action.GetGameProductsAction" scope="prototype">
+        <property name="service" ref="gameService"/>
+    </bean>
+
+    <bean id="getApplyingGamesAction" class="com.mysteam.action.GetApplyingGamesAction" scope="prototype">
+        <property name="service" ref="gameService"/>
+    </bean>
+
 </beans>

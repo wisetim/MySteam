@@ -3,6 +3,7 @@ package com.mysteam.dao;
 import com.mysteam.entity.Game;
 import com.mysteam.mapper.GameMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,5 +36,17 @@ public class GameDao {
 
     public int getPageNumByType(String type) {
         return gameMapper.selectPageNumByType(type);
+    }
+
+    public List<Game> selectGamesByDeveloper(int userId) {
+        List<Game> games = gameMapper.selectGamesByDeveloper(userId,false);
+        List<Game> appylingGames = gameMapper.selectGamesByDeveloper(userId,true);
+        if (games == null) games = new ArrayList<>();
+        games.addAll(appylingGames);
+        return games;
+    }
+
+    public List<Game> selectApplyingGames() {
+        return gameMapper.selectApplyingGames();
     }
 }

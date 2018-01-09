@@ -32,4 +32,11 @@ public interface GameMapper {
             @Param("pageSize") int pageSize);
 
     int selectPageNumByType(String type);
+
+
+    List<Game> selectGamesByDeveloper(
+            @Param("developer") int developer,
+            @Param("applying") boolean applying);
+
+    List<Game> selectApplyingGames();
 }

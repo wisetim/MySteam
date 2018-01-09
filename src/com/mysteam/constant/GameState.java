@@ -10,12 +10,14 @@ public class GameState {
     public static final short APPLYING_UPDATE = 1;
     //下架申请中
     public static final short APPLYING_REMOVE = 2;
+    //申请被拒绝
+    public static final short APPLYING_REFUSED = 3;
 
 
     //上架中
-    public static final short ON_THE_SHELF = 3;
+    public static final short ON_THE_SHELF = 4;
     //已下架
-    public static final short OFF_THE_SHELF = 4;
+    public static final short OFF_THE_SHELF = 5;
 
 
     //未购买

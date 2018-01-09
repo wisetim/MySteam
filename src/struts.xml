@@ -12,5 +12,15 @@
             <result name="input">/dvlpr_apply_add.jsp</result>
             <result name="error">/dvlpr_apply_add.jsp</result>
         </action>
+        <action name="getGameProducts" class="getGameProductsAction" method="getGameProducts">
+            <result name="success">/dvlpr_home.jsp</result>
+            <result name="error">/error.jsp</result>
+            <result name="input">/error.jsp</result>
+        </action>
+        <action name="getApplyingGames" class="getApplyingGamesAction" method="getApplyingGames">
+            <result name="success">/admin_home.jsp</result>
+            <result name="error">/error.jsp</result>
+            <result name="input">/error.jsp</result>
+        </action>
     </package>
 </struts>

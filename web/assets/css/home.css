@@ -1,0 +1,118 @@
+h2.title {
+    color: #127f1b;
+    text-align: center;
+    border-bottom: dashed #4da00c 1px
+}
+
+table.table-wrapper {
+    border: solid 2px #4da00c
+}
+
+div.cover {
+    height: 100px;
+    width: 100px;
+    border: solid #127f1b 2px;
+    border-radius: 2px;
+}
+
+div.second {
+    height: 60px;
+    border: solid #127f1b 1px;
+    border-radius: 2px;
+    background: #458F0B;
+    color: #aaffad;
+    font-size: small;
+}
+
+div.second b {
+    padding-left: 5px;
+    color: #0dd136
+}
+
+td.third {
+    height: 100px;
+    width: 400px;
+    border: dashed #4c9b1a 1px;
+    text-align: center;
+    font-size: xx-large;
+    font-family: "Arial Rounded MT Bold", sans-serif;
+    background: url(../../images/bg.png) repeat;
+    border-radius: 2px;
+}
+
+td.third:hover {
+    height: 100px;
+    width: 400px;
+    border: solid #247213 1px;
+    text-align: center;
+    font-size: xx-large;
+    font-family: "Arial Rounded MT Bold", sans-serif;
+    color: #247213;
+    background: url(../../images/bg.png) repeat;
+    border-radius: 2px;
+}
+
+div.name {
+    width: 180px;
+    height: 21px;
+    text-align: center;
+    background: #458F0B;
+    border-color: #127f1b;
+    box-shadow: 0 0 0 1px #089b27;
+    border-radius: 2px;
+    color: #aaffad;
+}
+
+div.type {
+    width: 90px;
+    height: 21px;
+    text-align: center;
+    background: #458F0B;
+    border-color: #127f1b;
+    box-shadow: 0 0 0 1px #089b27;
+    border-radius: 2px;
+    color: #aaffad;
+}
+
+div.version {
+    width: 90px;
+    height: 21px;
+    text-align: center;
+    background: #458F0B;
+    border-color: #127f1b;
+    box-shadow: 0 0 0 1px #089b27;
+    border-radius: 2px;
+    color: #aaffad;
+}
+
+div.price {
+    width: 90px;
+    height: 21px;
+    text-align: center;
+    background: #458F0B;
+    border-color: #127f1b;
+    box-shadow: 0 0 0 1px #089b27;
+    border-radius: 2px;
+    color: #aaffad;
+}
+
+div.state {
+    width: 90px;
+    height: 60px;
+    text-align: center;
+    background: #458F0B;
+    border-color: #127f1b;
+    box-shadow: 0 0 0 1px #089b27;
+    border-radius: 2px;
+    color: #aaffad;
+}
+
+div.state p {
+    padding-top: 15px;
+}
+
+div.banner {
+    background-color: #247213;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

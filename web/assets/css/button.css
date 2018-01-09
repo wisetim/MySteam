@@ -113,7 +113,7 @@ input[type="button"].special,
 button.special,
 .button.special {
     background-color: #089b27;
-    color: #076217 !important;
+    color: #AAFFAD !important;
 }
 
 input[type="submit"].special:hover,
@@ -122,6 +122,7 @@ input[type="button"].special:hover,
 button.special:hover,
 .button.special:hover {
     background-color: #08691b;
+    color: #0de730;
 }
 
 input[type="submit"].special:active,
@@ -130,4 +131,20 @@ input[type="button"].special:active,
 button.special:active,
 .button.special:active {
     background-color: #044f10;
+    color: #0da827;
+}
+
+input[type="submit"].cancel {
+    background-color: #a50607;
+    color: rgb(223, 223, 223) !important;
+}
+
+input[type="submit"].cancel:hover {
+    background-color: #8e0607;
+    color: #dfdfdf;
+}
+
+input[type="submit"].cancel:active {
+    background-color: #5f0203;
+    color: #dfdfdf;
 }

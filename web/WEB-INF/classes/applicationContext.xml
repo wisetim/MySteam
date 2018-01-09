@@ -4,8 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-
-
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
         <property name="location" value="classpath:jdbc.properties"/>
     </bean>
@@ -28,7 +26,7 @@
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <!--<bean id="collegeMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
@@ -73,6 +71,14 @@
 
     <!--Actions-->
     <bean id="applyNewGameAction" class="com.mysteam.action.ApplyNewGameAction" scope="prototype">
+        <property name="service" ref="gameService"/>
+    </bean>
+
+    <bean id="getGameProductsAction" class="com.mysteam.action.GetGameProductsAction" scope="prototype">
+        <property name="service" ref="gameService"/>
+    </bean>
+
+    <bean id="getApplyingGamesAction" class="com.mysteam.action.GetApplyingGamesAction" scope="prototype">
         <property name="service" ref="gameService"/>
     </bean>
 
