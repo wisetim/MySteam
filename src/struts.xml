@@ -7,7 +7,12 @@
 <struts>
     <constant name="struts.enable.DynamicMethodInvocation" value="true"/>
     <package name="strutsBean" extends="struts-default" namespace="/">
-        <action name="applyNewGame" class="applyNewGameAction" method="upload">
+        <action name="applyNewGame" class="developerApplyAction" method="applyNew">
+            <result name="success">/dvlpr_home.jsp</result>
+            <result name="input">/dvlpr_apply_add.jsp</result>
+            <result name="error">/dvlpr_apply_add.jsp</result>
+        </action>
+        <action name="cancelApply" class="developerApplyAction" method="cancelApply">
             <result name="success">/dvlpr_home.jsp</result>
             <result name="input">/dvlpr_apply_add.jsp</result>
             <result name="error">/dvlpr_apply_add.jsp</result>
@@ -19,6 +24,28 @@
         </action>
         <action name="getApplyingGames" class="getApplyingGamesAction" method="getApplyingGames">
             <result name="success">/admin_home.jsp</result>
+            <result name="error">/error.jsp</result>
+            <result name="input">/error.jsp</result>
+        </action>
+        <action name="acceptApplyNewGame" class="handleApplyAction" method="acceptApplyAddNew">
+            <result name="success">/admin_home.jsp</result>
+            <result name="error">/error.jsp</result>
+            <result name="input">/error.jsp</result>
+        </action>
+        <action name="refuseApplyNewGame" class="handleApplyAction" method="refuseApplyAddNew">
+            <result name="success">/admin_home.jsp</result>
+            <result name="error">/error.jsp</result>
+            <result name="input">/error.jsp</result>
+        </action>
+        <action name="refuseApplyUpdateOrDelete" class="handleApplyAction" method="refuseApplyUpdateOrRemove">
+            <result name="success">/admin_home.jsp</result>
+            <result name="error">/error.jsp</result>
+            <result name="input">/error.jsp</result>
+        </action>
+        <action name="showCover" class="showCoverAction" method="showCover">
+        </action>
+        <action name="confirmResult" class="confirmResultAction" method="confirm">
+            <result name="success">/dvlpr_home.jsp</result>
             <result name="error">/error.jsp</result>
             <result name="input">/error.jsp</result>
         </action>

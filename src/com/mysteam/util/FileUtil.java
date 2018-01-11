@@ -14,7 +14,7 @@ public class FileUtil {
     }
 
     @Nullable
-    public static String getString(int gameId, String gameFileName, File gameFile) {
+    public static String saveApplyingGameFile(int gameId, String gameFileName, File gameFile) {
         File savefile = new File(new File(StorageConstants.FILE_TEMP_PATH), gameFileName);
         try {
             FileUtils.copyFile(gameFile, savefile);
@@ -41,5 +41,20 @@ public class FileUtil {
         }
         while (true) if (savefile.delete()) break;
         return null;
+    }
+
+    public static void removeApplyingGameFile(int applyId) {
+        String applyPath = StorageConstants.APPLYING_NEW_PATH + "id_" + applyId;
+        File dir = new File(applyPath);
+        if (dir.exists()) {
+            String[] filenames = dir.list();
+            assert filenames != null;
+            for (String filename : filenames) {
+                File file = new File(applyPath + "\\" + filename);
+                if (file.isFile())
+                    while (true) if (file.delete()) break;
+            }
+            while (true) if (dir.delete()) break;
+        }
     }
 }

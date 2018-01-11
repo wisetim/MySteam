@@ -16,17 +16,18 @@ import java.util.Map;
 /**
  * Created by Tim on 2018/1/8
  */
-public class ApplyNewGameAction extends ActionSupport {
+public class DeveloperApplyAction extends ActionSupport {
     private Game game;
     private File gameCover;
     private String coverName;
     private File gameFile;
     private String gameFileName;
+    private int applyId;
 
     private GameService service;
 
 
-    public String upload() {
+    public String applyNew() {
         Map request = (Map) ActionContext.getContext().get("request");
         if (gameCover != null) {
             File savefile = new File(new File(StorageConstants.IMAGE_TEMP_PATH), coverName);
@@ -39,9 +40,9 @@ public class ApplyNewGameAction extends ActionSupport {
             //while (true) if (savefile.delete()) break;
         }
         if (gameFile != null) {
-            game.setState(GameState.APPLYING_NEW);
+            game.setState(GameState.ON_APPLYING_ADD);
             int gameId = service.applyNewGame(game);
-            String message = FileUtil.getString(gameId, gameFileName, gameFile);
+            String message = FileUtil.saveApplyingGameFile(gameId, gameFileName, gameFile);
             if (message != null) {
                 request.put("message",message);
                 return ERROR;
@@ -51,7 +52,10 @@ public class ApplyNewGameAction extends ActionSupport {
         return SUCCESS;
     }
 
-
+    public String cancelApply() {
+        service.cancelApply(applyId);
+        return SUCCESS;
+    }
 
     public Game getGame() {
         return game;
@@ -99,5 +103,13 @@ public class ApplyNewGameAction extends ActionSupport {
 
     public void setService(GameService service) {
         this.service = service;
+    }
+
+    public int getApplyId() {
+        return applyId;
+    }
+
+    public void setApplyId(int applyId) {
+        this.applyId = applyId;
     }
 }

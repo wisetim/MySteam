@@ -24,12 +24,9 @@ public class ImageUtil {
     @Nullable
     public static byte[] getImageBinary(File file) {
         String filename = file.getName();
-//        System.out.println(filename);
         String fileType = filename.substring(filename.lastIndexOf('.') + 1);
-//        System.out.println(fileType);
         BufferedImage image;
-        File cacheDirectory =
-                new File(StorageConstants.IMAGE_TEMP_PATH);
+        File cacheDirectory = new File(StorageConstants.IMAGE_TEMP_PATH);
         try {
             image = ImageIO.read(file);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -41,19 +38,5 @@ public class ImageUtil {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean cacheImage(byte[] data, String path) {
-        String fileType = path.substring(path.lastIndexOf('.') + 1);
-        try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-            BufferedImage image = ImageIO.read(inputStream);
-            File file = new File(path);// 可以是jpg,png,gif格式
-            ImageIO.write(image, fileType, file);// 不管输出什么格式图片，此处不需改动
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }

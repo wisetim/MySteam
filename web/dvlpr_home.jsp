@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ taglib prefix="gs" uri="http://mysteam.com/tag" %>
 <html>
 <head>
     <title>开发者主页</title>
@@ -37,7 +38,7 @@
         <c:forEach items="${requestScope.gameProducts}" var="product">
             <tr>
                 <td rowspan="2">
-                    <div class="cover"><img src="images/icon.png" width="100" height="100"></div>
+                    <div class="cover"><img src="showCover.action?gameId=${product.gameId}" width="100" height="100"></div>
                 </td>
 
                 <td align="center">
@@ -58,17 +59,19 @@
 
                 <td>
                     <div style="height: 30px">
-                        <c:if test="${product.state == 0 or product.state == 1 or product.state == 2}">
-                            <form action="#" method="post">
+                        <c:if test="${gs:isOnApplyingAdd(product) or gs:isOnApplyingUpdate(product) or gs:isOnApplyingRemove(product)}">
+                            <form action="cancelApply.action" method="post">
+                                <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
                                 <input class="button cancel" type="submit" value="撤销">
                             </form>
                         </c:if>
-                        <c:if test="${product.state == 3}">
-                            <form action="#" method="post">
+                        <c:if test="${gs:isApplyingAddFailed(product)}">
+                            <form action="confirmResult.action" method="post">
+                                <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
                                 <input class="button special" type="submit" value="确定">
                             </form>
                         </c:if>
-                        <c:if test="${product.state == 4}">
+                        <c:if test="${gs:isOnSale(product)}">
                             <form action="#" method="post">
                                 <input class="button special" type="submit" value="更新">
                             </form>
@@ -84,22 +87,28 @@
                 <td>
                     <div class="state">
                         <c:choose>
-                            <c:when test="${product.state == 0}">
+                            <c:when test="${gs:isOnApplyingAdd(product)}">
                                 <p>上架申请中</p>
                             </c:when>
-                            <c:when test="${product.state == 1}">
+                            <c:when test="${gs:isOnApplyingUpdate(product)}">
                                 <p>更新申请中</p>
                             </c:when>
-                            <c:when test="${product.state == 2}">
+                            <c:when test="${gs:isOnApplyingRemove(product)}">
                                 <p>下架申请中</p>
                             </c:when>
-                            <c:when test="${product.state == 3}">
-                                <p style="color: darkred">申请失败</p>
+                            <c:when test="${gs:isApplyingAddFailed(product)}">
+                                <p style="color: darkred">上架失败</p>
                             </c:when>
-                            <c:when test="${product.state == 4}">
+                            <c:when test="${gs:isApplyingUpdateFailed(product)}">
+                                <p style="color: darkred">更新失败</p>
+                            </c:when>
+                            <c:when test="${gs:isApplyingRemoveFailed(product)}">
+                                <p style="color: darkred">下架失败</p>
+                            </c:when>
+                            <c:when test="${gs:isOnSale(product)}">
                                 <p>已上架</p>
                             </c:when>
-                            <c:when test="${product.state == 5}">
+                            <c:when test="${not gs:isOnSale(product)}">
                                 <p>已下架</p>
                             </c:when>
                         </c:choose>
@@ -110,7 +119,7 @@
                 <td>
 
                     <div style="height: 30px">
-                        <c:if test="${product.state == 4}">
+                        <c:if test="${gs:isOnSale(product)}">
                             <form action="#" method="post">
                                 <input class="button special" type="submit" value="下架">
                             </form>

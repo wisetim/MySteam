@@ -39,4 +39,20 @@ public interface GameMapper {
             @Param("applying") boolean applying);
 
     List<Game> selectApplyingGames();
+
+    Game selectApplyingGameById(int applyId);
+
+    int deleteApplyingGameById(int applyId);
+
+    int updateApplyingGameState(
+            @Param("applyId") int applyId,
+            @Param("state") short state);
+
+    int updateGameState(
+            @Param("applyId") int applyId,
+            @Param("state") short state);
+
+    void updateMostSimilarGame(@Param("applyingGame") Game applyingGame);
+
+    Game selectMostSimilarGame(@Param("applyingGame") Game applyingGame);
 }

@@ -64,13 +64,32 @@
 
     <select id="selectApplyingGames" resultMap="ResultMapWithBLOBs">
         SELECT
-            <include refid="Apply_Column_List"/>
+        <include refid="Apply_Column_List"/>
         FROM games_on_applying
+    </select>
+
+    <select id="selectApplyingGameById" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Apply_Column_List"/>
+        FROM games_on_applying
+        WHERE game_id=#{applyId}
+    </select>
+    <select id="selectMostSimilarGame" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM games
+        WHERE game_name = #{applyingGame.gameName}
+        AND developer = #{applyingGame.developer.userId}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         DELETE FROM games
         WHERE game_id = #{gameId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteApplyingGameById">
+        DELETE FROM games_on_applying
+        WHERE game_id = #{applyId}
     </delete>
 
     <insert id="insert" parameterType="com.mysteam.entity.Game">
@@ -155,12 +174,10 @@
         </trim>
     </insert>
 
-    <insert id="insertApplyingGame" parameterType="com.mysteam.entity.Game">
-        <selectKey resultType="java.lang.Integer" keyProperty="gameId" order="BEFORE">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        insert into games_on_applying (<include refid="Apply_Column_List"/>)
-        values (#{gameId,jdbcType=INTEGER}, #{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+    <insert id="insertApplyingGame" parameterType="com.mysteam.entity.Game" keyProperty="gameId"
+            useGeneratedKeys="true">
+        insert into games_on_applying (game_name, type, developer, price, version, state, cover, introduction)
+        values (#{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
         #{developer.userId,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{version,jdbcType=VARCHAR},
         #{state,jdbcType=SMALLINT}, #{cover,jdbcType=LONGVARBINARY}, #{introduction,jdbcType=VARCHAR}
         )
@@ -223,5 +240,23 @@
             on_sale_date = #{onSaleDate,jdbcType=DATE},
             introduction = #{introduction,jdbcType=VARCHAR}
         WHERE game_id = #{gameId,jdbcType=INTEGER}
+    </update>
+    <update id="updateApplyingGameState">
+        UPDATE games_on_applying
+        SET state = #{state}
+        WHERE game_id = #{applyId}
+    </update>
+    <update id="updateGameState">
+        UPDATE games
+        SET state = #{state}
+        WHERE game_id = #{applyId}
+    </update>
+    <update id="updateMostSimilarGame">
+        UPDATE games
+        SET version      = #{applyingGame.version},
+            cover        = #{applyingGame.cover},
+            introduction = #{applyingGame.introduction}
+        WHERE game_name = #{applyingGame.gameName}
+              AND developer = #{applyingGame.developer.userId}
     </update>
 </mapper>

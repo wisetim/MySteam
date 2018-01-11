@@ -70,7 +70,7 @@
     </bean>
 
     <!--Actions-->
-    <bean id="applyNewGameAction" class="com.mysteam.action.ApplyNewGameAction" scope="prototype">
+    <bean id="developerApplyAction" class="com.mysteam.action.DeveloperApplyAction" scope="prototype">
         <property name="service" ref="gameService"/>
     </bean>
 
@@ -79,6 +79,16 @@
     </bean>
 
     <bean id="getApplyingGamesAction" class="com.mysteam.action.GetApplyingGamesAction" scope="prototype">
+        <property name="service" ref="gameService"/>
+    </bean>
+
+    <bean id="handleApplyAction" class="com.mysteam.action.HandleApplyAction" scope="prototype">
+        <property name="service" ref="gameService"/>
+    </bean>
+
+    <bean id="showCoverAction" class="com.mysteam.action.ShowCoverAction" scope="prototype"/>
+
+    <bean id="confirmResultAction" class="com.mysteam.action.ConfirmResultAction" scope="prototype">
         <property name="service" ref="gameService"/>
     </bean>
 
