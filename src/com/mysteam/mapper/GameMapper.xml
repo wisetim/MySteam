@@ -97,15 +97,13 @@
         WHERE apply_id = #{applyId}
     </delete>
 
-    <insert id="insert" parameterType="com.mysteam.entity.Game">
-        <selectKey resultType="java.lang.Integer" keyProperty="gameId" order="BEFORE">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        insert into games (game_id, game_name, type, developer,
+    <insert id="insert" parameterType="com.mysteam.entity.Game" keyProperty="gameId"
+            useGeneratedKeys="true">
+        insert into games (game_name, type, developer,
         price, version, state,
         on_sale_date, introduction
         )
-        values (#{gameId,jdbcType=INTEGER}, #{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+        values (#{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
         #{developer.userId,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{version,jdbcType=VARCHAR},
         #{state,jdbcType=SMALLINT}, #{onSaleDate,jdbcType=DATE}, #{introduction,jdbcType=VARCHAR}
         )

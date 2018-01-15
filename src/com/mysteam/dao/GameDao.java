@@ -45,11 +45,15 @@ public class GameDao {
     }
 
     public List<Game> selectGamesByDeveloper(int userId) {
-        List<Game> games = gameMapper.selectApplyingGamesByDeveloper(userId);
-        List<Game> applyingGames = gameMapper.selectOnSaleGamesByDeveloper(userId);
+        List<Game> games = gameMapper.selectOnSaleGamesByDeveloper(userId);
         if (games == null) games = new ArrayList<>();
-        games.addAll(applyingGames);
         return games;
+    }
+
+    public List<Game> selectAppplyingGamesByDeveloper(int userId) {
+        List<Game> applyingGames = gameMapper.selectApplyingGamesByDeveloper(userId);
+        if (applyingGames == null) applyingGames = new ArrayList<>();
+        return applyingGames;
     }
 
     public List<Game> selectApplyingGames() {

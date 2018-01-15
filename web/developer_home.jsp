@@ -16,6 +16,17 @@
     <%--<link rel="stylesheet" href="assets/css/main.css"/>--%>
     <link rel="stylesheet" href="assets/css/button.css"/>
     <link rel="stylesheet" href="assets/css/home.css"/>
+    <script type="text/javascript">
+        function showNormalForm() {
+            document.getElementById("applyingForm").style.display = "none";
+            document.getElementById("normalForm").style.display = "";
+        }
+
+        function showApplyingForm() {
+            document.getElementById("normalForm").style.display = "none";
+            document.getElementById("applyingForm").style.display = "";
+        }
+    </script>
 </head>
 <body>
 
@@ -25,11 +36,24 @@
     <h1 align="center">DEVELOPER GAME MANAGE CENTER</h1>
     <%--<hr style="height:1px;border:none;border-top:1px ridge #51ff08;"/>--%>
 </div>
-<br>
-<br>
+
+<%@include file="login_bar.jsp" %>
+
 <%--<h2 style="color: #127f1b; text-align: center; border: dashed #4da00c 1px">MY GAME LIBRARY</h2>--%>
-<div>
+<div id="normalForm">
+    <br>
+    <br>
     <table align="center" class="table-wrapper" cellspacing="10">
+        <tr>
+            <td colspan="6" align="center">
+                <button style="width: 340px; background: #085618;font-size: large">
+                    NORMAL
+                </button>
+                <button style="width: 340px; background: #089b27;font-size: large" onclick="showApplyingForm()">
+                    APPLYING
+                </button>
+            </td>
+        </tr>
         <tr>
             <td colspan="6" align="center">
                 <h2 class="title">MY GAME LIBRARY</h2>
@@ -79,19 +103,10 @@
                                     </form>
                                 </c:if>
                             </c:when>
-                            <c:when test="${gs:isOnApplyingAdd(product) or gs:isOnApplyingUpdate(product)
-                                                            or gs:isOnApplyingRemove(product)}">
-                                <form action="cancelApply.action" method="post">
-                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
-                                    <input class="button cancel" type="submit" value="撤销">
-                                </form>
-                            </c:when>
-                            <c:when test="${gs:isApplyingFailed(product)}">
-                                <form action="confirmResult.action" method="post">
-                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
-                                    <input class="button special" type="submit" value="确定">
-                                </form>
-                            </c:when>
+                            <c:otherwise>
+                                <div style="width: 75px">
+                                </div>
+                            </c:otherwise>
                         </c:choose>
                     </div>
                 </td>
@@ -159,15 +174,120 @@
             <td><br></td>
         </tr>
 
-        <tr>
-            <td style="width: 100px">
-            </td>
-            <td colspan="4" class="third"
+        <tr align="center">
+            <td></td>
+            <td colspan="4" class="third" align="center"
                 onclick="window.location.href='developer_apply_add.jsp'">
                 + ADD
             </td>
-            <td style="width: 100px">
+            <td></td>
         </tr>
+    </table>
+</div>
+
+<div id="applyingForm" style="display: none">
+    <br>
+    <br>
+    <table align="center" class="table-wrapper" cellspacing="10">
+        <tr>
+            <td colspan="6" align="center">
+                <div class="option">
+                    <button style="width: 340px; background: #089b27; font-size: large" onclick="showNormalForm()">
+                        NORMAL
+                    </button>
+                    <button style="width: 340px; background: #085618; font-size: large">
+                        APPLYING
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" align="center">
+                <h2 class="title">APPLYING GAME LIBRARY</h2>
+            </td>
+        </tr>
+        <c:forEach items="${requestScope.applyingProds}" var="product">
+            <tr>
+                <td rowspan="2">
+                    <div class="cover">
+                        <img src="showCover.action?gameId=${product.gameId}&onSale=${false}"
+                             width="100" height="100">
+                    </div>
+                </td>
+
+                <td align="center">
+                    <div class="name">${product.gameName}</div>
+                </td>
+
+                <td>
+                    <div class="type">${product.type}</div>
+                </td>
+
+                <td>
+                    <div class="version">${product.version}</div>
+                </td>
+
+                <td>
+                    <div class="price">￥${product.price}</div>
+                </td>
+
+                <td>
+                    <div style="height: 30px">
+                        <c:choose>
+                            <c:when test="${gs:isOnApplyingAdd(product) or gs:isOnApplyingUpdate(product)
+                                                            or gs:isOnApplyingRemove(product)}">
+                                <form action="cancelApply.action" method="post">
+                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
+                                    <input class="button cancel" type="submit" value="撤销">
+                                </form>
+                            </c:when>
+                            <c:when test="${gs:isApplyingFailed(product)}">
+                                <form action="confirmResult.action" method="post">
+                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
+                                    <input class="button special" type="submit" value="确定">
+                                </form>
+                            </c:when>
+                        </c:choose>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="second"><b>游戏简介：</b>${product.introduction}</div>
+                </td>
+
+                <td>
+                    <div class="state">
+                        <c:choose>
+                            <c:when test="${gs:isOnApplyingAdd(product)}">
+                                <p style="color: yellow">上架申请中</p>
+                            </c:when>
+                            <c:when test="${gs:isOnApplyingUpdate(product)}">
+                                <p style="color: yellow">更新申请中</p>
+                            </c:when>
+                            <c:when test="${gs:isOnApplyingRemove(product)}">
+                                <p style="color: yellow">下架申请中</p>
+                            </c:when>
+                            <c:when test="${gs:isApplyingAddFailed(product)}">
+                                <p style="color: darkred">上架失败</p>
+                            </c:when>
+                            <c:when test="${gs:isApplyingUpdateFailed(product)}">
+                                <p style="color: darkred">更新失败</p>
+                            </c:when>
+                            <c:when test="${gs:isApplyingRemoveFailed(product)}">
+                                <p style="color: darkred">下架失败</p>
+                            </c:when>
+                        </c:choose>
+
+                    </div>
+                </td>
+
+                <td>
+                    <div style="height: 30px">
+                    </div>
+                </td>
+            </tr>
+        </c:forEach>
         <tr>
             <td><br></td>
         </tr>

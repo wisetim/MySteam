@@ -29,6 +29,10 @@ div.second b {
     color: #0dd136
 }
 
+div.empty {
+    width: 70px;
+}
+
 td.third {
     height: 100px;
     width: 400px;

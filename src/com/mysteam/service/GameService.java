@@ -64,6 +64,10 @@ public class GameService {
         return dao.selectGamesByDeveloper(userId);
     }
 
+    public List<Game> getApplyingProducts(int userId) {
+        return dao.selectAppplyingGamesByDeveloper(userId);
+    }
+
     public List<Game> getApplyList() {
         return dao.selectApplyingGames();
     }

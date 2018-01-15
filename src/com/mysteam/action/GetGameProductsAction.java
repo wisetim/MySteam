@@ -13,7 +13,6 @@ import java.util.Map;
  * Created by Tim on 2018/1/8
  */
 public class GetGameProductsAction extends ActionSupport {
-    private List<Game> productions;
     private GameService service;
 
     public String getGameProducts() {
@@ -21,10 +20,13 @@ public class GetGameProductsAction extends ActionSupport {
         Map request = (Map) ActionContext.getContext().get("request");
         User developer = (User) session.get("user");
 //        productions = service.getProducts(developer.getUserId());
-        productions = service.getProducts(1);
+//        applyingProds = service.getApplyingProducts(developer.getUserId());
+        List<Game> productions = service.getProducts(1);
+        List<Game> applyingProds = service.getApplyingProducts(1);
         for (Game game : productions) System.out.println(game.getGameName());
         request.put("gameProducts", productions);
-        return productions != null ? SUCCESS : ERROR;
+        request.put("applyingProds", applyingProds);
+        return SUCCESS;
     }
 
     public GameService getService() {
@@ -33,13 +35,5 @@ public class GetGameProductsAction extends ActionSupport {
 
     public void setService(GameService service) {
         this.service = service;
-    }
-
-    public List<Game> getProductions() {
-        return productions;
-    }
-
-    public void setProductions(List<Game> productions) {
-        this.productions = productions;
     }
 }
