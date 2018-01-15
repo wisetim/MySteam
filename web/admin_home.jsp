@@ -43,7 +43,19 @@
                     </td>
 
                     <td>
-                        <div class="name">${product.gameName}</div>
+                        <c:if test="${not gs:isOnApplyingRemove(product)}">
+                            <div class="name">
+                                  <a href="streamDownloadAction.action?gameId=${product.gameId}"
+                                     style="text-decoration:none;color: #aaffad;">
+                                          ${product.gameName}
+                                  </a>
+                            </div>
+                        </c:if>
+                        <c:if test="${gs:isOnApplyingRemove(product)}">
+                            <div class="name">
+                                ${product.gameName}
+                            </div>
+                        </c:if>
                     </td>
 
                     <td>

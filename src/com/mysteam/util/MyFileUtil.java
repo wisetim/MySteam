@@ -1,11 +1,12 @@
 package com.mysteam.util;
 
 import com.mysteam.constant.StorageConstants;
+import com.mysteam.dao.GameDao;
+import com.mysteam.entity.Game;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.util.Arrays;
 
 /**
  * Created by Tim on 2018/1/8
@@ -23,7 +24,7 @@ public class MyFileUtil {
             e.printStackTrace();
         }
         GameStoragePath storagePath = new GameStoragePath.Builder(
-                StorageConstants.APPLYING_NEW_PATH,
+                StorageConstants.APPLYING_PATH,
                 gameId).build();
         File file = new File(storagePath.getPath());
         if (!file.mkdirs()) return "游戏已存在！";
@@ -47,7 +48,7 @@ public class MyFileUtil {
 
     public static void removeApplyingGameFile(int applyId) {
         GameStoragePath storagePath = new GameStoragePath.Builder(
-                StorageConstants.APPLYING_NEW_PATH,
+                StorageConstants.APPLYING_PATH,
                 applyId).build();
         String applyPath = storagePath.getPath();
         File dir = new File(applyPath);
@@ -67,7 +68,7 @@ public class MyFileUtil {
         String imageType = coverName.substring(coverName.indexOf('.'));
         coverName = "cover" + imageType;
         GameStoragePath storagePath = new GameStoragePath.Builder(
-                StorageConstants.APPLYING_NEW_PATH,
+                StorageConstants.APPLYING_PATH,
                 gameId).build();
         File saveCover = new File(new File(storagePath.getPath()), coverName);
         try {
@@ -106,8 +107,11 @@ public class MyFileUtil {
         clearGameFile(storageDir);
     }
 
-    private static void moveFromApplyingToStorage(String applyPath, File storageDir, String[] filenames) {
+    private static void moveFromApplyingToStorage(String applyPath, File storageDir,
+                                                  String[] filenames, Game game) {
         for (String filename : filenames) {
+            if (filename.endsWith(".rar"))
+                filename = game.getGameName() + "_" + game.getVersion();
             File file = new File(applyPath + "\\" + filename);
             if (file.isFile()) {
                 File newFile = new File(storageDir, filename);
@@ -121,8 +125,10 @@ public class MyFileUtil {
     }
 
     public static void moveUpdateFileToStorage(int applyId, int updatedId) {
+        GameDao dao = new GameDao();
+        Game game = dao.selectByGameId(updatedId);
         GameStoragePath storagePath = new GameStoragePath.Builder(
-                StorageConstants.APPLYING_NEW_PATH,
+                StorageConstants.APPLYING_PATH,
                 applyId).build();
         String applyPath = storagePath.getPath();
         File applyDir = new File(applyPath);
@@ -138,13 +144,15 @@ public class MyFileUtil {
                 else clearGameFile(storageDir);
             } else clearAllFile(storageDir);
 
-            moveFromApplyingToStorage(applyPath, storageDir, filenames);
+            moveFromApplyingToStorage(applyPath, storageDir, filenames, game);
         }
     }
 
     public static void moveNewFileToStorage(int applyId, int newId) {
+        GameDao dao = new GameDao();
+        Game game = dao.selectByGameId(newId);
         GameStoragePath storagePath = new GameStoragePath.Builder(
-                StorageConstants.APPLYING_NEW_PATH,
+                StorageConstants.APPLYING_PATH,
                 applyId).build();
         String applyPath = storagePath.getPath();
         File dir = new File(applyPath);
@@ -155,7 +163,20 @@ public class MyFileUtil {
         File storageDir = new File(storagePath.getPath());
         String[] filenames = dir.list();
         assert filenames != null;
-        moveFromApplyingToStorage(applyPath, storageDir, filenames);
+        moveFromApplyingToStorage(applyPath, storageDir, filenames, game);
+    }
+
+    public static String getGameFilePath(int gameId) {
+        GameStoragePath storagePath = new GameStoragePath.Builder(
+                StorageConstants.APPLYING_PATH,
+                gameId).build();
+        File storageDir = new File(storagePath.getPath());
+        String[] filenames = storageDir.list();
+        if (filenames == null) return null;
+        for (String filename : filenames) {
+            if (filename.endsWith(".rar")) return filename;
+        }
+        return null;
     }
 
 }

@@ -40,12 +40,10 @@ public class GameService {
 
     public void refuseApplyAddNew(int applyId) {
         dao.applyAddNewFailed(applyId);
-        MyFileUtil.removeApplyingGameFile(applyId);
     }
 
     public void refuseApplyUpdate(int applyId) {
         dao.applyUpdateFailed(applyId);
-        MyFileUtil.removeApplyingGameFile(applyId);
     }
 
     public void refuseApplyRemove(int applyId) {
@@ -73,8 +71,9 @@ public class GameService {
     }
 
     public void confirmApplyResult(int applyId) {
-        int gameId = dao.selectOriginIdById(applyId);
-        Game game = dao.selectByGameId(gameId);
+        Integer gameId = dao.selectOriginIdById(applyId);
+        Game game = null;
+        if (gameId!= null ) game = dao.selectByGameId(gameId);
         if (game != null) {
             short state = (short) (game.getState()
                     & (1023 ^ GameState.APPLYING_ADD_FAILED)
@@ -87,6 +86,7 @@ public class GameService {
             dao.updateGameStateById(gameId, state);
         }
         dao.deleteApplyingGameById(applyId);
+        MyFileUtil.removeApplyingGameFile(applyId);
     }
 
     public void cancelApply(int applyId) {

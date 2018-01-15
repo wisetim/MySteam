@@ -92,4 +92,8 @@
         <property name="service" ref="gameService"/>
     </bean>
 
+    <bean id="streamDownloadAction" class="com.mysteam.action.StreamDownloadAction"
+          scope="prototype">
+    </bean>
+
 </beans>

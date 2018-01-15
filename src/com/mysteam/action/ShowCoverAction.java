@@ -2,9 +2,7 @@ package com.mysteam.action;
 
 import com.mysteam.constant.StorageConstants;
 import com.mysteam.dao.GameDao;
-import com.mysteam.entity.Game;
 import com.mysteam.util.GameStoragePath;
-import com.mysteam.util.MyFileUtil;
 import org.apache.struts2.ServletActionContext;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +32,7 @@ public class ShowCoverAction {
             imageFile = findCoverFile(StorageConstants.GAME_STORAGE_PATH, gameId);
         }
         if (imageFile == null) {
-            imageFile = findCoverFile(StorageConstants.APPLYING_NEW_PATH, gameId);
+            imageFile = findCoverFile(StorageConstants.APPLYING_PATH, gameId);
         }
         if (imageFile == null) {
             GameDao dao = new GameDao();
@@ -46,7 +44,7 @@ public class ShowCoverAction {
         if (imageFile == null) {
             imageFile = findCoverFile(StorageConstants.GAME_STORAGE_PATH, gameId);
         }
-        assert imageFile != null;
+        if (imageFile == null) return null;
         try (InputStream inputStream = new FileInputStream(imageFile);
              OutputStream writer = response.getOutputStream()) {
             byte[] buf = new byte[1024];
