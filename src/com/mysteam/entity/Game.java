@@ -19,9 +19,9 @@ public class Game {
 
     private Date onSaleDate;
 
-    private byte[] cover;
-
     private String introduction;
+
+    private Integer originId;
 
     public Integer getGameId() {
         return gameId;
@@ -87,19 +87,19 @@ public class Game {
         this.onSaleDate = onSaleDate;
     }
 
-    public byte[] getCover() {
-        return cover;
-    }
-
-    public void setCover(byte[] cover) {
-        this.cover = cover;
-    }
-
     public String getIntroduction() {
         return introduction;
     }
 
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public Integer getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(Integer originId) {
+        this.originId = originId;
     }
 }

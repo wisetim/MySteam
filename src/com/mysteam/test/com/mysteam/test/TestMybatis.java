@@ -29,8 +29,8 @@ public class TestMybatis {
     static BASE64Encoder encoder = new sun.misc.BASE64Encoder();
     static BASE64Decoder decoder = new sun.misc.BASE64Decoder();
     public static void main(String[] args) {
-        ApplicationContext context = ApplicationContextSingleton.getContext();
-        UserMapper mapper = (UserMapper) context.getBean("userMapper");
+//        ApplicationContext context = ApplicationContextSingleton.getContext();
+//        UserMapper mapper = (UserMapper) context.getBean("userMapper");
 //        User user = new User();
 //        user.setAccount("lalala");
 //        user.setPassword("lalala");
@@ -41,10 +41,10 @@ public class TestMybatis {
 //
 //        mapper.insert(user);
 
-        User user1 = mapper.selectByAccountAndPassword("lalala","lalala");
-        System.out.println(user1.getUserId());
-
-        GameMapper mapper1 = (GameMapper) context.getBean("gameMapper");
+//        User user1 = mapper.selectByAccountAndPassword("lalala","lalala");
+//        System.out.println(user1.getUserId());
+//
+//        GameMapper mapper1 = (GameMapper) context.getBean("gameMapper");
 //        Game game = new Game();
 //        game.setGameName("扫雷");
 //        game.setDeveloper(user1);
@@ -62,23 +62,21 @@ public class TestMybatis {
 //        game.setOnSaleDate(new Date());
 //        game.setPrice(20.0);
 //        game.setVersion("v1.0");
-//        game.setCover(getImageBinary());
 //        game.setType("益智");
 //        mapper1.insert(game);
 
 
-//        getImageBinary();
 //        Game game1 = mapper1.selectByPrimaryKey(2);
 //        User developer = game1.getDeveloper();
 //        System.out.println(developer.getAccount());
 //        System.out.println(game1.getGameName());
 //        base64StringToImage(game1.getCover());
-
-        GameDao dao = new GameDao();
-        List<Game> games =  dao.selectGamesByDeveloper(1);
-        for (Game game : games) System.out.println(game.getGameName());
-
-        GameOrderMapper mapper2 = (GameOrderMapper) context.getBean("gameOrderMapper");
+//
+//        GameDao dao = new GameDao();
+//        List<Game> games =  dao.selectGamesByDeveloper(1);
+//        for (Game game : games) System.out.println(game.getGameName());
+//
+//        GameOrderMapper mapper2 = (GameOrderMapper) context.getBean("gameOrderMapper");
 
 //        GameOrder order = new GameOrder();
 //        order.setOwner(user1);
@@ -91,10 +89,10 @@ public class TestMybatis {
 //
 //        mapper2.insert(order);
 
-        GameOrder order2 = mapper2.selectByPrimaryKey(2,1);
-        System.out.println(order2.getBuyer().getAccount());
+//        GameOrder order2 = mapper2.selectByPrimaryKey(2,1);
+//        System.out.println(order2.getBuyer().getAccount());
 
-        ReviewMapper mapper3 = (ReviewMapper) context.getBean("reviewMapper");
+//        ReviewMapper mapper3 = (ReviewMapper) context.getBean("reviewMapper");
 
 //        Review review = new Review();
 //        review.setReviewer(user1);
@@ -105,10 +103,17 @@ public class TestMybatis {
 //        review.setVersion("v1.0");
 //
 //        mapper3.insert(review);
-        Review review1 = mapper3.selectByPrimaryKey(1);
-        System.out.println(review1.getReviewer().getAccount());
+//        Review review1 = mapper3.selectByPrimaryKey(1);
+//        System.out.println(review1.getReviewer().getAccount());
 
-
+        short state = (short) (5
+                & (1023 ^ GameState.APPLYING_ADD_FAILED)
+                & (1023 ^ GameState.APPLYING_UPDATE_FAILED)
+                & (1023 ^ GameState.APPLYING_REMOVE_FAILED)
+                & (1023 ^ GameState.ON_APPLYING_ADD)
+                & (1023 ^ GameState.ON_APPLYING_UPDATE)
+                & (1023 ^ GameState.ON_APPLYING_REMOVE));
+        System.out.println(state);
     }
 
     private static byte[] getImageBinary() {

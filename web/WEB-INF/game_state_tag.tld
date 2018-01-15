@@ -7,7 +7,7 @@
 
     <tlib-version>1.0</tlib-version>
     <short-name>gs</short-name>
-    <uri>http://mysteam.com/tag</uri>
+    <uri>http://mysteam.com/tag/state</uri>
 
 
     <function>
@@ -56,6 +56,12 @@
         <name>isApplyingFailed</name>
         <function-class>com.mysteam.tag.GameStateTag</function-class>
         <function-signature>boolean isApplyingFailed(com.mysteam.entity.Game)</function-signature>
+    </function>
+
+    <function>
+        <name>isNotOnApplying</name>
+        <function-class>com.mysteam.tag.GameStateTag</function-class>
+        <function-signature>boolean isNotOnApplying(com.mysteam.entity.Game)</function-signature>
     </function>
 
     <!-- Invoke 'Generate' action to add tags or functions -->

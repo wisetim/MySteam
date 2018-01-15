@@ -48,4 +48,10 @@ public class GameStateTag {
                 || isApplyingUpdateFailed(game)
                 || isApplyingRemoveFailed(game);
     }
+
+    public static boolean isNotOnApplying(Game game) {
+        return !isOnApplyingAdd(game) &&
+                !isOnApplyingUpdate(game) &&
+                !isOnApplyingRemove(game);
+    }
 }

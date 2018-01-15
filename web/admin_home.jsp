@@ -7,13 +7,12 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="gs" uri="http://mysteam.com/tag" %>
+<%@ taglib prefix="gs" uri="http://mysteam.com/tag/state" %>
 <html>
 <head>
     <title>管理员个人主页</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale="/>
-    <%--<link rel="stylesheet" href="assets/css/main.css"/>--%>
     <link rel="stylesheet" href="assets/css/button.css"/>
     <link rel="stylesheet" href="assets/css/home.css"/>
 </head>
@@ -22,7 +21,6 @@
 
 <div class="banner">
     <h1 align="center">ADMIN GAME MANAGE CENTER</h1>
-    <%--<hr style="height:1px;border:none;border-top:1px ridge #51ff08;"/>--%>
 </div>
 
 <br>
@@ -40,7 +38,8 @@
             <c:if test="${not gs:isApplyingFailed(product)}">
                 <tr>
                     <td rowspan="2">
-                        <div class="cover"><img src="showCover.action?gameId=${product.gameId}" width="100" height="100"></div>
+                        <div class="cover"><img src="showCover.action?gameId=${product.gameId}&onSale=${gs:isOnSale(product)}" width="100"
+                                                height="100"></div>
                     </td>
 
                     <td>
@@ -60,31 +59,35 @@
                     </td>
 
                     <td>
-                        <c:if test="${gs:isOnApplyingAdd(product)}">
-                            <div style="height: 30px">
-                                <form action="acceptApplyNewGame.action">
-                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
-                                    <input class="button special" type="submit" value="同意">
-                                </form>
-                            </div>
-                        </c:if>
-                        <c:if test="${gs:isOnApplyingUpdate(product)}">
-                            <div style="height: 30px">
-                                <form action="acceptApplyNewGame.action">
-                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
-                                    <input class="button special" type="submit" value="同意">
-                                </form>
-                            </div>
-                        </c:if>
-                        <c:if test="${gs:isOnApplyingUpdate(product)}">
-                            <div style="height: 30px">
-                                <form action="acceptApplyNewGame.action">
-                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
-                                    <input class="button special" type="submit" value="同意">
-                                </form>
-                            </div>
-                        </c:if>
-
+                        <c:choose>
+                            <c:when test="${gs:isOnApplyingAdd(product)}">
+                                <div style="height: 30px">
+                                    <form action="acceptApplyNewGame.action" method="post">
+                                        <input type="text" style="display:none;" name="applyId"
+                                               value="${product.gameId}">
+                                        <input class="button special" type="submit" value="同意">
+                                    </form>
+                                </div>
+                            </c:when>
+                            <c:when test="${gs:isOnApplyingUpdate(product)}">
+                                <div style="height: 30px">
+                                    <form action="acceptUpdateGame.action" method="post">
+                                        <input type="text" style="display:none;" name="applyId"
+                                               value="${product.gameId}">
+                                        <input class="button special" type="submit" value="同意">
+                                    </form>
+                                </div>
+                            </c:when>
+                            <c:when test="${gs:isOnApplyingRemove(product)}">
+                                <div style="height: 30px">
+                                    <form action="acceptRemoveGame.action" method="post">
+                                        <input type="text" style="display:none;" name="applyId"
+                                               value="${product.gameId}">
+                                        <input class="button special" type="submit" value="同意">
+                                    </form>
+                                </div>
+                            </c:when>
+                        </c:choose>
                     </td>
                 </tr>
                 <tr>
@@ -96,13 +99,13 @@
                         <div class="state">
                             <c:choose>
                                 <c:when test="${gs:isOnApplyingAdd(product)}">
-                                    <p>申请上架</p>
+                                    <p style="color: yellow">申请上架</p>
                                 </c:when>
                                 <c:when test="${gs:isOnApplyingUpdate(product)}">
-                                    <p>申请更新</p>
+                                    <p style="color: yellow">申请更新</p>
                                 </c:when>
                                 <c:when test="${gs:isOnApplyingRemove(product)}">
-                                    <p>申请下架</p>
+                                    <p style="color: yellow">申请下架</p>
                                 </c:when>
                             </c:choose>
 
@@ -118,9 +121,17 @@
                                 </form>
                             </div>
                         </c:if>
-                        <c:if test="${not gs:isOnApplyingAdd(product)}">
+                        <c:if test="${gs:isOnApplyingUpdate(product)}">
                             <div style="height: 30px">
-                                <form action="refuseApplyUpdateOrDelete.action">
+                                <form action="refuseApplyUpdate.action">
+                                    <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
+                                    <input class="button cancel" type="submit" value="拒绝">
+                                </form>
+                            </div>
+                        </c:if>
+                        <c:if test="${gs:isOnApplyingRemove(product)}">
+                            <div style="height: 30px">
+                                <form action="refuseApplyRemove.action">
                                     <input type="text" style="display:none;" name="applyId" value="${product.gameId}">
                                     <input class="button cancel" type="submit" value="拒绝">
                                 </form>

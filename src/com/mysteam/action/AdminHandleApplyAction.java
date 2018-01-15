@@ -6,7 +6,7 @@ import com.opensymphony.xwork2.ActionSupport;
 /**
  * Created by Tim on 2018/1/9
  */
-public class HandleApplyAction extends ActionSupport {
+public class AdminHandleApplyAction extends ActionSupport {
     private int applyId;
     private GameService service;
 
@@ -21,13 +21,23 @@ public class HandleApplyAction extends ActionSupport {
         return SUCCESS;
     }
 
+    public String acceptApplyRemove() {
+        service.acceptApplyRemove(applyId);
+        return SUCCESS;
+    }
+
     public String refuseApplyAddNew() {
         service.refuseApplyAddNew(applyId);
         return SUCCESS;
     }
 
-    public String refuseApplyUpdateOrRemove() {
-        service.refuseApplyUpdateOrRemove(applyId);
+    public String refuseApplyUpdate() {
+        service.refuseApplyUpdate(applyId);
+        return SUCCESS;
+    }
+
+    public String refuseApplyRemove() {
+        service.refuseApplyRemove(applyId);
         return SUCCESS;
     }
 

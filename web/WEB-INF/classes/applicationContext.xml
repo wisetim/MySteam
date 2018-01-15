@@ -82,7 +82,7 @@
         <property name="service" ref="gameService"/>
     </bean>
 
-    <bean id="handleApplyAction" class="com.mysteam.action.HandleApplyAction" scope="prototype">
+    <bean id="handleApplyAction" class="com.mysteam.action.AdminHandleApplyAction" scope="prototype">
         <property name="service" ref="gameService"/>
     </bean>
 

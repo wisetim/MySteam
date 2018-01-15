@@ -1,16 +1,13 @@
 package com.mysteam.action;
 
 import com.mysteam.constant.GameState;
-import com.mysteam.constant.StorageConstants;
 import com.mysteam.entity.Game;
 import com.mysteam.service.GameService;
-import com.mysteam.util.FileUtil;
-import com.mysteam.util.ImageUtil;
+import com.mysteam.util.MyFileUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -26,29 +23,56 @@ public class DeveloperApplyAction extends ActionSupport {
 
     private GameService service;
 
-
-    public String applyNew() {
+    public String newGameApplyCommitted() {
         Map request = (Map) ActionContext.getContext().get("request");
-        if (gameCover != null) {
-            File savefile = new File(new File(StorageConstants.IMAGE_TEMP_PATH), coverName);
-            try {
-                FileUtils.copyFile(gameCover, savefile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            game.setCover(ImageUtil.getImageBinary(savefile));
-            //while (true) if (savefile.delete()) break;
-        }
+        int gameId;
         if (gameFile != null) {
             game.setState(GameState.ON_APPLYING_ADD);
-            int gameId = service.applyNewGame(game);
-            String message = FileUtil.saveApplyingGameFile(gameId, gameFileName, gameFile);
+            gameId = service.applyNewGame(game);
+            String message = MyFileUtil.saveApplyingGameFile(gameId, gameFileName, gameFile);
             if (message != null) {
-                request.put("message",message);
+                request.put("message", message);
                 return ERROR;
             }
         } else return ERROR;
-        request.put("message","申请成功！");
+        if (gameCover != null) {
+            MyFileUtil.saveApplyingGameCover(gameId,coverName,gameCover);
+        }
+        request.put("message", "申请成功！");
+        return SUCCESS;
+    }
+
+    public String applyUpdateGame() {
+        Map request = (Map) ActionContext.getContext().get("request");
+        Game updatedGame = service.getGameToUpdate(applyId);
+        updatedGame.setOriginId(applyId);
+        request.put("updatedGame", updatedGame);
+        return SUCCESS;
+    }
+
+    public String updateGameApplyCommitted() {
+        Map request = (Map) ActionContext.getContext().get("request");
+        int applyId = service.applyUpdateGame(game);
+        if (gameFile != null) {
+            String message = MyFileUtil.saveApplyingGameFile(applyId, gameFileName, gameFile);
+            if (message != null) {
+                request.put("message", message);
+                return ERROR;
+            }
+        }
+        if (gameCover != null) {
+            String message = MyFileUtil.saveApplyingGameCover(applyId,coverName,gameCover);
+            if (message != null) {
+                request.put("message", message);
+                return ERROR;
+            }
+        }
+        request.put("message", "申请成功！");
+        return SUCCESS;
+    }
+
+    public String removeGameApplyCommitted() {
+        service.applyRemoveGame(applyId);
         return SUCCESS;
     }
 

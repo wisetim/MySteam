@@ -1,14 +1,10 @@
 package com.mysteam.service;
 
 import com.mysteam.constant.GameState;
-import com.mysteam.constant.StorageConstants;
 import com.mysteam.dao.GameDao;
 import com.mysteam.entity.Game;
-import com.mysteam.util.FileUtil;
-import org.apache.commons.io.FileUtils;
+import com.mysteam.util.MyFileUtil;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,63 +14,42 @@ public class GameService {
     private GameDao dao;
 
     public int applyNewGame(Game game) {
-        return dao.insertApplyNewGame(game);
+        return dao.insertApplyGame(game);
     }
 
     public void acceptApplyAddNew(int applyId) {
         int newId = dao.applyAddNewPassed(applyId);
-        String applyPath = StorageConstants.APPLYING_NEW_PATH + "id_" + applyId;
-        File dir = new File(applyPath);
-        File storageDir = new File(StorageConstants.GAME_STORAGE_PATH + "id_" + newId);
-        String[] filenames = dir.list();
-        assert filenames != null;
-        for (String filename : filenames) {
-            File file = new File(applyPath + "\\" + filename);
-            if (file.isFile()) {
-                File newFile = new File(storageDir, filename);
-                try {
-                    FileUtils.copyFile(file, newFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        FileUtil.removeApplyingGameFile(applyId);
+        MyFileUtil.moveNewFileToStorage(applyId, newId);
+        MyFileUtil.removeApplyingGameFile(applyId);
     }
 
-
     public void acceptApplyUpdate(int applyId) {
-        //TODO 下面要改
-        int newId = dao.applyUpdatePassed(applyId);
-        String applyPath = StorageConstants.APPLYING_NEW_PATH + "id_" + applyId;
-        File dir = new File(applyPath);
-        File storageDir = new File(StorageConstants.GAME_STORAGE_PATH + "id_" + newId);
-        String[] filenames = dir.list();
-        assert filenames != null;
-        for (String filename : filenames) {
-            File file = new File(applyPath + "\\" + filename);
-            if (file.isFile()) {
-                File newFile = new File(storageDir, filename);
-                try {
-                    FileUtils.copyFile(file, newFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        FileUtil.removeApplyingGameFile(applyId);
+        int updatedId = dao.applyUpdatePassed(applyId);
+        MyFileUtil.moveUpdateFileToStorage(applyId, updatedId);
+        MyFileUtil.removeApplyingGameFile(applyId);
+    }
+
+    public void acceptApplyRemove(int applyId) {
+        int gameId = dao.selectOriginIdById(applyId);
+        Game game = dao.selectByGameId(gameId);
+        dao.updateGameStateById(gameId, (short) (game.getState()
+                & (1023 ^ GameState.ON_SALE)
+                & (1023 ^ GameState.ON_APPLYING_REMOVE)));
+        dao.deleteApplyingGameById(applyId);
     }
 
     public void refuseApplyAddNew(int applyId) {
-        FileUtil.removeApplyingGameFile(applyId);
         dao.applyAddNewFailed(applyId);
+        MyFileUtil.removeApplyingGameFile(applyId);
     }
 
+    public void refuseApplyUpdate(int applyId) {
+        dao.applyUpdateFailed(applyId);
+        MyFileUtil.removeApplyingGameFile(applyId);
+    }
 
-
-    public void refuseApplyUpdateOrRemove(int applyId) {
-        FileUtil.removeApplyingGameFile(applyId);
-        dao.applyUpdateOrRemoveFailed(applyId);
+    public void refuseApplyRemove(int applyId) {
+        dao.applyRemoveFailed(applyId);
     }
 
     public GameDao getDao() {
@@ -94,28 +69,54 @@ public class GameService {
     }
 
     public void confirmApplyResult(int applyId) {
-        Game game = dao.selectByGameId(applyId);
+        int gameId = dao.selectOriginIdById(applyId);
+        Game game = dao.selectByGameId(gameId);
         if (game != null) {
             short state = (short) (game.getState()
-                    &(GameState.APPLYING_UPDATE_FAILED-1)
-                    &(GameState.APPLYING_REMOVE_FAILED-1));
+                    & (1023 ^ GameState.APPLYING_ADD_FAILED)
+                    & (1023 ^ GameState.APPLYING_UPDATE_FAILED)
+                    & (1023 ^ GameState.APPLYING_REMOVE_FAILED)
+                    & (1023 ^ GameState.ON_APPLYING_ADD)
+                    & (1023 ^ GameState.ON_APPLYING_UPDATE)
+                    & (1023 ^ GameState.ON_APPLYING_REMOVE));
             game.setState(state);
-            dao.updateGameStateById(applyId, state);
-        } else {
-            dao.deleteApplyingGameById(applyId);
+            dao.updateGameStateById(gameId, state);
         }
+        dao.deleteApplyingGameById(applyId);
     }
 
     public void cancelApply(int applyId) {
-        Game game = dao.selectByGameId(applyId);
+        int gameId = dao.selectOriginIdById(applyId);
+        Game game = dao.selectByGameId(gameId);
         if (game != null) {
             short state = (short) (game.getState()
-                    &(GameState.ON_APPLYING_UPDATE-1)
-                    &(GameState.ON_APPLYING_REMOVE-1));
+                    & (1023 ^ GameState.ON_APPLYING_ADD)
+                    & (1023 ^ GameState.ON_APPLYING_UPDATE)
+                    & (1023 ^ GameState.ON_APPLYING_REMOVE));
             game.setState(state);
-            dao.updateGameStateById(applyId, state);
-        } else {
-            dao.deleteApplyingGameById(applyId);
+            dao.updateGameStateById(gameId, state);
         }
+        dao.deleteApplyingGameById(applyId);
     }
+
+    public Game getGameToUpdate(int applyId) {
+        return dao.selectByGameId(applyId);
+    }
+
+    public int applyUpdateGame(Game game) {
+        game.setState((short) (game.getState() | GameState.ON_APPLYING_UPDATE));
+        dao.updateGameStateById(game.getGameId(), game.getState());
+        game.setState((short) (game.getState() & (1023 ^ GameState.ON_SALE)));
+        return dao.insertApplyGame(game);
+    }
+
+    public void applyRemoveGame(int applyId) {
+        Game game = dao.selectByGameId(applyId);
+        game.setState((short) (game.getState() | GameState.ON_APPLYING_REMOVE));
+        dao.updateGameStateById(game.getGameId(), game.getState());
+        game.setState((short) (game.getState() & (1023 ^ GameState.ON_SALE)));
+        game.setOriginId(game.getGameId());
+        dao.insertApplyGame(game);
+    }
+
 }

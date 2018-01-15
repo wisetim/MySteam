@@ -13,31 +13,36 @@
         <association property="developer" column="developer" fetchType="lazy"
                      select="com.mysteam.mapper.UserMapper.selectByPrimaryKey"/>
     </resultMap>
-    <resultMap id="ResultMapWithBLOBs" type="com.mysteam.entity.Game" extends="BaseResultMap">
-        <result column="cover" property="cover" jdbcType="LONGVARBINARY"/>
+
+    <resultMap id="ApplyResultMap" type="com.mysteam.entity.Game">
+        <id column="apply_id" property="gameId" jdbcType="INTEGER"/>
+        <result column="game_name" property="gameName" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="SMALLINT"/>
+        <result column="introduction" property="introduction" jdbcType="VARCHAR"/>
+        <result column="origin_id" property="originId" jdbcType="INTEGER"/>
+        <association property="developer" column="developer" fetchType="lazy"
+                     select="com.mysteam.mapper.UserMapper.selectByPrimaryKey"/>
     </resultMap>
     <sql id="Apply_Column_List">
-        game_id, game_name, type, developer, price, version, state, cover, introduction
+        apply_id, game_name, type, developer, price, version, state, introduction, origin_id
     </sql>
     <sql id="Base_Column_List">
         game_id, game_name, type, developer, price, version, state, on_sale_date, introduction
     </sql>
-    <sql id="Blob_Column_List">
-        cover
-    </sql>
 
-    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
         from games
         where game_id = #{gameId,jdbcType=INTEGER}
     </select>
 
-    <select id="selectByType" resultMap="ResultMapWithBLOBs">
+    <select id="selectByType" resultMap="BaseResultMap">
         SELECT
-        <include refid="Blob_Column_List"/>
+        <include refid="Base_Column_List"/>
         FROM games
         WHERE type = #{type,jdbcType=VARCHAR}
         LIMIT #{skipRows}, #{pageSize}
@@ -49,37 +54,37 @@
         WHERE type = #{type}
     </select>
 
-    <select id="selectGamesByDeveloper" resultMap="ResultMapWithBLOBs">
+    <select id="selectApplyingGamesByDeveloper" resultMap="ApplyResultMap">
         SELECT
         <include refid="Apply_Column_List"/>
-        FROM
-        <if test="applying">
-            games_on_applying
-        </if>
-        <if test="!applying">
-            games
-        </if>
+        FROM games_on_applying
         WHERE developer=#{developer}
     </select>
 
-    <select id="selectApplyingGames" resultMap="ResultMapWithBLOBs">
+    <select id="selectApplyingGames" resultMap="ApplyResultMap">
         SELECT
         <include refid="Apply_Column_List"/>
         FROM games_on_applying
     </select>
 
-    <select id="selectApplyingGameById" resultMap="ResultMapWithBLOBs">
+    <select id="selectApplyingGameById" resultMap="ApplyResultMap">
         SELECT
         <include refid="Apply_Column_List"/>
         FROM games_on_applying
-        WHERE game_id=#{applyId}
+        WHERE apply_id=#{applyId}
     </select>
-    <select id="selectMostSimilarGame" resultMap="BaseResultMap">
+
+    <select id="selectOnSaleGamesByDeveloper" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM games
-        WHERE game_name = #{applyingGame.gameName}
-        AND developer = #{applyingGame.developer.userId}
+        WHERE developer=#{developer}
+    </select>
+
+    <select id="selectOriginIdById" resultType="java.lang.Integer">
+        SELECT origin_id
+        FROM games_on_applying
+        WHERE apply_id = #{applyId}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -89,7 +94,7 @@
 
     <delete id="deleteApplyingGameById">
         DELETE FROM games_on_applying
-        WHERE game_id = #{applyId}
+        WHERE apply_id = #{applyId}
     </delete>
 
     <insert id="insert" parameterType="com.mysteam.entity.Game">
@@ -98,12 +103,11 @@
         </selectKey>
         insert into games (game_id, game_name, type, developer,
         price, version, state,
-        on_sale_date, cover, introduction
+        on_sale_date, introduction
         )
         values (#{gameId,jdbcType=INTEGER}, #{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
         #{developer.userId,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{version,jdbcType=VARCHAR},
-        #{state,jdbcType=SMALLINT}, #{onSaleDate,jdbcType=DATE},
-        #{cover,jdbcType=LONGVARBINARY}, #{introduction,jdbcType=VARCHAR}
+        #{state,jdbcType=SMALLINT}, #{onSaleDate,jdbcType=DATE}, #{introduction,jdbcType=VARCHAR}
         )
     </insert>
 
@@ -135,9 +139,6 @@
             <if test="onSaleDate != null">
                 on_sale_date,
             </if>
-            <if test="cover != null">
-                cover,
-            </if>
             <if test="introduction != null">
                 introduction,
             </if>
@@ -165,9 +166,6 @@
             <if test="onSaleDate != null">
                 #{onSaleDate,jdbcType=DATE},
             </if>
-            <if test="cover != null">
-                #{cover,jdbcType=LONGVARBINARY},
-            </if>
             <if test="introduction != null">
                 #{introduction,jdbcType=VARCHAR},
             </if>
@@ -176,10 +174,10 @@
 
     <insert id="insertApplyingGame" parameterType="com.mysteam.entity.Game" keyProperty="gameId"
             useGeneratedKeys="true">
-        insert into games_on_applying (game_name, type, developer, price, version, state, cover, introduction)
-        values (#{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
-        #{developer.userId,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{version,jdbcType=VARCHAR},
-        #{state,jdbcType=SMALLINT}, #{cover,jdbcType=LONGVARBINARY}, #{introduction,jdbcType=VARCHAR}
+        INSERT INTO games_on_applying (game_name, type, developer, price, version, state, introduction, origin_id)
+        VALUES (#{gameName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+                #{developer.userId,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{version,jdbcType=VARCHAR},
+                #{state,jdbcType=SMALLINT}, #{introduction,jdbcType=VARCHAR}, #{originId, jdbcType=INTEGER}
         )
     </insert>
 
@@ -207,27 +205,11 @@
             <if test="onSaleDate != null">
                 on_sale_date = #{onSaleDate,jdbcType=DATE},
             </if>
-            <if test="cover != null">
-                cover = #{cover,jdbcType=LONGVARBINARY},
-            </if>
             <if test="introduction != null">
                 introduction = #{introduction, jdbcType=VARCHAR}
             </if>
         </set>
         where game_id = #{gameId,jdbcType=INTEGER}
-    </update>
-    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.mysteam.entity.Game">
-        UPDATE games
-        SET game_name    = #{gameName,jdbcType=VARCHAR},
-            type         = #{type,jdbcType=VARCHAR},
-            developer    = #{developer.userId,jdbcType=INTEGER},
-            price        = #{price,jdbcType=DOUBLE},
-            version      = #{version,jdbcType=VARCHAR},
-            state        = #{state,jdbcType=SMALLINT},
-            on_sale_date = #{onSaleDate,jdbcType=DATE},
-            cover        = #{cover,jdbcType=LONGVARBINARY},
-            introduction = #{introduction,jdbcType=VARCHAR}
-        WHERE game_id = #{gameId,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.mysteam.entity.Game">
         UPDATE games
@@ -244,19 +226,11 @@
     <update id="updateApplyingGameState">
         UPDATE games_on_applying
         SET state = #{state}
-        WHERE game_id = #{applyId}
+        WHERE apply_id = #{applyId}
     </update>
     <update id="updateGameState">
         UPDATE games
         SET state = #{state}
         WHERE game_id = #{applyId}
-    </update>
-    <update id="updateMostSimilarGame">
-        UPDATE games
-        SET version      = #{applyingGame.version},
-            cover        = #{applyingGame.cover},
-            introduction = #{applyingGame.introduction}
-        WHERE game_name = #{applyingGame.gameName}
-              AND developer = #{applyingGame.developer.userId}
     </update>
 </mapper>

@@ -22,8 +22,6 @@ public interface GameMapper {
 
     int updateByPrimaryKeySelective(Game record);
 
-    int updateByPrimaryKeyWithBLOBs(Game record);
-
     int updateByPrimaryKey(Game record);
 
     List<Game> selectByType (
@@ -34,9 +32,11 @@ public interface GameMapper {
     int selectPageNumByType(String type);
 
 
-    List<Game> selectGamesByDeveloper(
-            @Param("developer") int developer,
-            @Param("applying") boolean applying);
+    List<Game> selectApplyingGamesByDeveloper(
+            @Param("developer") int developer);
+
+    List<Game> selectOnSaleGamesByDeveloper(
+            @Param("developer") int developer);
 
     List<Game> selectApplyingGames();
 
@@ -52,7 +52,5 @@ public interface GameMapper {
             @Param("applyId") int applyId,
             @Param("state") short state);
 
-    void updateMostSimilarGame(@Param("applyingGame") Game applyingGame);
-
-    Game selectMostSimilarGame(@Param("applyingGame") Game applyingGame);
+    Integer selectOriginIdById(int applyId);
 }

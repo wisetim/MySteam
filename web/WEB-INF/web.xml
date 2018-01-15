@@ -17,7 +17,7 @@
     </filter>
     <filter-mapping>
         <filter-name>developHomeFilter</filter-name>
-        <url-pattern>/dvlpr_home.jsp</url-pattern>
+        <url-pattern>/developer_home.jsp</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>

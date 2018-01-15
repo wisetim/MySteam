@@ -3,7 +3,6 @@ package com.mysteam.dao;
 import com.mysteam.constant.GameState;
 import com.mysteam.entity.Game;
 import com.mysteam.mapper.GameMapper;
-import com.mysteam.tag.GameStateTag;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,10 +23,8 @@ public class GameDao {
         gameMapper.insert(game);
     }
 
-    public int insertApplyNewGame(Game game) {
-        System.out.println(game.getGameId());
+    public int insertApplyGame(Game game) {
         gameMapper.insertApplyingGame(game);
-        System.out.println(game.getGameId());
         return game.getGameId();
     }
 
@@ -48,8 +45,8 @@ public class GameDao {
     }
 
     public List<Game> selectGamesByDeveloper(int userId) {
-        List<Game> games = gameMapper.selectGamesByDeveloper(userId,false);
-        List<Game> applyingGames = gameMapper.selectGamesByDeveloper(userId,true);
+        List<Game> games = gameMapper.selectApplyingGamesByDeveloper(userId);
+        List<Game> applyingGames = gameMapper.selectOnSaleGamesByDeveloper(userId);
         if (games == null) games = new ArrayList<>();
         games.addAll(applyingGames);
         return games;
@@ -63,42 +60,47 @@ public class GameDao {
         Game applyingGame = gameMapper.selectApplyingGameById(applyId);
         applyingGame.setState(GameState.ON_SALE);
         applyingGame.setOnSaleDate(new Date());
-        int newId = gameMapper.insert(applyingGame);
+        gameMapper.insert(applyingGame);
         gameMapper.deleteApplyingGameById(applyId);
-        return newId;
+        return applyingGame.getGameId();
     }
 
     public int applyUpdatePassed(int applyId) {
         Game applyingGame = gameMapper.selectApplyingGameById(applyId);
-        Game game = gameMapper.selectMostSimilarGame(applyingGame);
+        Game game = gameMapper.selectByPrimaryKey(applyingGame.getOriginId());
+        game.setState((short) (game.getState() & (1023 ^ GameState.ON_APPLYING_UPDATE)));
         game.setVersion(applyingGame.getVersion());
-        game.setCover(applyingGame.getCover());
         game.setPrice(applyingGame.getPrice());
         game.setIntroduction(applyingGame.getIntroduction());
         gameMapper.updateByPrimaryKey(game);
-
-        //TODO 这里有问题
-
         gameMapper.deleteApplyingGameById(applyId);
-        return applyId;
+        return game.getGameId();
     }
 
     public void applyAddNewFailed(int applyId) {
         gameMapper.updateApplyingGameState(applyId, GameState.APPLYING_ADD_FAILED);
     }
 
-    public void applyUpdateOrRemoveFailed(int applyId) {
-        gameMapper.updateGameState(applyId, GameState.APPLYING_UPDATE_FAILED);
+    public void applyUpdateFailed(int applyId) {
+        gameMapper.updateApplyingGameState(applyId, GameState.APPLYING_UPDATE_FAILED);
     }
 
-    public void updateGameStateById(int applyId, short state) {
+    public void applyRemoveFailed(int applyId) {
+        gameMapper.updateApplyingGameState(applyId, GameState.APPLYING_REMOVE_FAILED);
+    }
+
+    public void updateGameStateById(int gameId, short state) {
         Game temp = new Game();
-        temp.setGameId(applyId);
+        temp.setGameId(gameId);
         temp.setState(state);
         gameMapper.updateByPrimaryKeySelective(temp);
     }
 
     public void deleteApplyingGameById(int applyId) {
         gameMapper.deleteApplyingGameById(applyId);
+    }
+
+    public Integer selectOriginIdById(int applyId) {
+        return gameMapper.selectOriginIdById(applyId);
     }
 }
